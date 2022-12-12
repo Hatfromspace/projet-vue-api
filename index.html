@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>commits-example</title>
     <style>
         #demo {
             font-family: "Helvetica", Arial, sans-serif;
         }
+
         a {
             text-decoration: none;
             color: #f66;
         }
+
         li {
             line-height: 1.5em;
             margin-bottom: 20px;
         }
+
         .author,
         .date {
             font-weight: bold;
@@ -25,37 +28,15 @@
 <body>
 <div id="demo">
     <!-- <pre>{{commits}}</pre> -->
-    <h1>Latest Vue.js Commits</h1>
-    <template v-for="branch in branches">
-        <input
-                type="radio"
-                :id="branch"
-                :value="branch"
-                name="branch"
-                v-model="currentBranch"
-        />
-        <label :for="branch">{{ branch }}</label>
-    </template>
-    <p>vuejs/vue@{{ currentBranch }}</p>
+    <h1>Latest Vue.js chuckBlagues</h1>
+    <p></p>
     <ul>
-        <li v-for="record in commits">
-            <a :href="record.html_url" target="_blank" class="commit"
-            >{{ record.sha.slice(0, 7) }}</a
-            >
-            -
-            <span class="message"
-            >{{ formattedMessage(record.commit.message) }}</span
-            ><br />
-            by
-            <span class="author"
-            ><a :href="record.author.html_url" target="_blank"
-            >{{ record.commit.author.name }}</a
-            ></span
-            >
-            at
-            <span class="date"
-            >{{ formattedDate(record.commit.author.date) }}</span
-            >
+        <li v-for="record in chuckBlagues">
+            <span class="author">
+                <a target="_blank">
+                    {{ record.toString() }}
+                </a>
+            </span>
         </li>
     </ul>
 </div>
@@ -63,56 +44,28 @@
 <script src="https://unpkg.com/vue@3"></script>
 <script>
     const apiURL =
-        "https://api.github.com/repos/vuejs/vue/commits?per_page=3&sha=";
-    const config = {
-    };
+        "https://api.chucknorris.io/jokes/random";
 
     Vue.createApp({
         data() {
             return {
-                branches: ["main", "dev"],
-                currentBranch: "main",
-                commits: null,
+                chuckBlagues: null,
             };
         },
 
         created: function () {
-            this.fetchDataPromise();
-            // this.fetchDataAsync()
+            this.fetchDataAsync();
         },
 
-        watch: {
-            currentBranch: "fetchDataPromise", //fetchDataAsync
-        },
         methods: {
-            fetchDataPromise: function () {
-                const self = this;
-                axios
-                    .get(apiURL + self.currentBranch, config)
-                    .then(function (response) {
-                        console.log(response.data);
-                        self.commits = response.data;
-                        // console.log(self.commits[0].html_url);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
             fetchDataAsync: async function () {
-            	try {
-              	const response = await axios.get(apiURL + this.currentBranch, config)
-            	  console.log(response.data)
-            	  this.commits = response.data
-              } catch(error) {
-                console.log(error);
-              }
-            },
-            formattedMessage: function (message) {
-                const newline = message.indexOf("\n");
-                return newline > 0 ? message.slice(0, newline) : message;
-            },
-            formattedDate: function (date) {
-                return date.replace(/T|Z/g, " ");
+                try {
+                    const response = await axios.get(apiURL);
+                    console.log(response.data)
+                    this.chuckBlagues = response.data
+                } catch (error) {
+                    console.log(error);
+                }
             },
         },
     }).mount("#demo");
